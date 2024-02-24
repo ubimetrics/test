@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Debian settings
+DEBIAN_VERSION="12"
+DEBIAN_VERNAME="bookworm"
+DEBIAN_RELEASE="20240201-1644"
+
+# Image settings
+IMAGE_ADDR="https://cloud.debian.org/images/cloud"
+IMAGE_TYPE="genericcloud"
+IMAGE_ARCH="amd64"
+IMAGE_FILE="debian-$DEBIAN_VERSION-$IMAGE_TYPE-$IMAGE_ARCH-$DEBIAN_RELEASE.qcow2"
+IMAGE_PATH="$IMAGE_ADDR/$DEBIAN_VERNAME/$DEBIAN_RELEASE/$IMAGE_FILE"
