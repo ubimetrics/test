@@ -1,66 +1,107 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - v*
       - debian*
-
+  
 permissions:
   contents: write
 
+env:
+  DEBIAN_VERSION: 12
+  DEBIAN_VERNAME: bookworm
+  DEBIAN_RELEASE: 20240201-1644
+
+  GCLOUD_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  GAGENT_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-grafanaagent-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  DOCKER_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-docker-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+
+  GCLOUD_IMAGE_URL: "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
+
 jobs:
-  release:
+  # create-release:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Create release draft
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh release create "${GITHUB_REF_NAME}" \
+  #             --repo="${GITHUB_REPOSITORY}" \
+  #             --title="${GITHUB_REF_NAME}" \
+  #             --generate-notes \
+  #             --latest \
+  #             --draft
+
+  download-base-image:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create release draft
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${GITHUB_REF_NAME}" \
-              --repo="${GITHUB_REPOSITORY}" \
-              --title="${GITHUB_REF_NAME}" \
-              --generate-notes \
-              --latest \
-              --draft
-
-  build-cloudimage:
-    runs-on: ubuntu-latest
-    needs: release
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build image
-        run: |
-          echo "cloudimage" > build.log
-          cat README.md
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Cache image
+        uses: actions/cache@v4
+        id: cache
         with:
-          name: debian-cloudimage
-          path: build.log
-          retention-days: 1
+          path: ${{ env.GCLOUD_IMAGE_NAME }}
+          key: ${{ env.GCLOUD_IMAGE_NAME }}
+    
+      - name: Download image
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: wget -O "${GCLOUD_IMAGE_NAME}" "${GCLOUD_IMAGE_URL}"
 
-  publish-cloudimage:
-    runs-on: ubuntu-latest
-    needs: build-cloudimage
+      # - name: Download image
+      #   if: steps.cache.outputs.cache-hit != 'true'
+      #   run: wget -O "$IMAGE_FILE" "$IMAGE_PATH"
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # build-cloudimage:
+  #   runs-on: ubuntu-latest
+  #   needs: release
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: debian-cloudimage
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Publish image
-        run: |
-          cat build.log
-          cat README.md
+  #     - name: Install libguestfs
+  #       run: |
+  #         sudo apt-get update -y
+  #         sudo apt-get install -y libguestfs-tools
+
+  #     - name: Download image
+  #       run: |
+  #         source settings.sh
+  #         wget -O "$IMAGE_FILE" "$IMAGE_PATH"
+
+  #     - name: Build image
+  #       run: |
+  #         echo "cloudimage" > build.log
+  #         cat README.md
+
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: debian-cloudimage
+  #         path: build.log
+  #         retention-days: 1
+
+  # publish-cloudimage:
+  #   runs-on: ubuntu-latest
+  #   needs: build-cloudimage
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: debian-cloudimage
+
+  #     - name: Publish image
+  #       run: |
+  #         cat build.log
+  #         cat README.md
 
       
