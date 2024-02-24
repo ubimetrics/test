@@ -15,9 +15,9 @@ env:
   DEBIAN_VERNAME: bookworm
   DEBIAN_RELEASE: 20240201-1644
 
-  GCLOUD_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-  GAGENT_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-grafanaagent-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-  DOCKER_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-docker-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  # GCLOUD_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  # GAGENT_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-grafanaagent-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  # DOCKER_IMAGE_NAME: debian-${{ env.DEBIAN_VERSION }}-docker-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
 
   GCLOUD_IMAGE_URL: "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
 
@@ -45,12 +45,14 @@ jobs:
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.GCLOUD_IMAGE_NAME }}
-          key: ${{ env.GCLOUD_IMAGE_NAME }}
+          key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+          path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
     
       - name: Download image
         if: steps.cache.outputs.cache-hit != 'true'
-        run: wget -O "${GCLOUD_IMAGE_NAME}" "${GCLOUD_IMAGE_URL}"
+        run: |
+          wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
+            "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
 
       # - name: Download image
       #   if: steps.cache.outputs.cache-hit != 'true'
