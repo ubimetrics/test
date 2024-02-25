@@ -70,7 +70,8 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 \
-            --install qemu-guest-agent,locales-all,htop
+            --install sl
+            #--install qemu-guest-agent,locales-all,htop
 
       - name: Cleanup image
         run: sudo virt-sparsify --in-place *.qcow2
@@ -102,8 +103,9 @@ jobs:
 
       - name: Rebuild image
         run: |
-          sudo virt-customize -a *.qcow2 \
-            --install vi
+          sudo virt-customize -a *.qcow2 --verbose \
+            --install sl \
+            --run-command "apt-get clean"
         
       - name: Upload artifacts
         run: |
