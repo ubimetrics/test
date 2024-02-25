@@ -81,7 +81,7 @@ jobs:
       - name: Cleanup image
         run: |
           SOURCE_FILE="$(ls *.qcow2)"
-          TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.version }}}"
+          TARGET_FILE="${SOURCE_FILE/genericcloud/"${{ matrix.version }}"}"
           echo sudo virt-sparsify $SOURCE_FILE --compress $TARGET_FILE
           # sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
           # sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
