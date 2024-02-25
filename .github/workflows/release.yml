@@ -55,10 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # variant: [qemu]
-        include:
-          - variant: qemu
-            c_compiler: gcc
+        variant: [qemu, locales, extra]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,18 +74,21 @@ jobs:
 
       - name: Rebuild image
         run: |
-          declare -A pkgs
-          pkgs=(
+          # Install packages
+          declare -A packages
+          packages=(
             [qemu]=qemu-guest-agent
-            [locales]=locales-all
+            [locales]=qemu-guest-agent,locales-all
+            [extra]=qemu-guest-agent,locales-all,htop
           )
-          echo ${pkgs[${{ matrix.variant }}]}
+          echo ${packages[${{ matrix.variant }}]}
       #     sudo virt-customize -a *.qcow2 \
       #       --install qemu-guest-agent \
       #       --run-command "apt-get clean"
 
-      - name: Cleanup image
+      - name: Compress image
         run: |
+          # Compress image
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
           echo sudo virt-sparsify $SOURCE_FILE --compress $TARGET_FILE
