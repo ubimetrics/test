@@ -17,34 +17,37 @@ env:
 
 jobs:
   release:
-    name: Create release
+    name: Create
     uses: ./.github/workflows/release-create.yml
 
-  download:
-    name: Download image
-    uses: ./.github/workflows/download-image.yml
-    with:
-      debian-version: "12"
+  # download:
+    # name: Download
+    # uses: ./.github/workflows/download-image.yml
+    # with:
+      # debian-version: "12"
       # debian-vername: ${{ env.DEBIAN_VERNAME }}
       # debian-release: ${{ env.DEBIAN_RELEASE }}
 
-  # download:
-  #   name: Download image
-  #   runs-on: ubuntu-latest
+  download:
+    name: Download image
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Cache image
-  #       uses: actions/cache@v4
-  #       id: cache
-  #       with:
-  #         key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-  #         path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+    steps:
+      - name: Cache image
+        uses: actions/cache@v4
+        id: cache
+        with:
+          key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+          path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
     
-  #     - name: Download image
-  #       if: steps.cache.outputs.cache-hit != 'true'
-  #       run: |
-  #         wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
-  #           "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
+      - name: Download image
+        if: steps.cache.outputs.cache-hit != 'true'
+        env:
+          IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+        run: wget -O "$IMAGE_FILENAME" "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/$IMAGE_FILENAME"
+
+          # wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
+          #   "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
 
   build-cloudimage:
     runs-on: ubuntu-latest
