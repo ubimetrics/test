@@ -75,7 +75,7 @@ jobs:
             #--install qemu-guest-agent,locales-all,htop
 
       - name: Cleanup image
-        run: sudo virt-sparsify --in-place *.qcow2
+        run: sudo virt-sparsify --compress --in-place *.qcow2
         
       - name: Upload artifacts
         run: |
