@@ -70,16 +70,20 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 --verbose \
-            --install sl \
+            --install qemu-guest-agent \
             --run-command "apt-get clean"
             #--install qemu-guest-agent,locales-all,htop
 
       - name: Cleanup image
-        run: sudo virt-sparsify --in-place *.qcow2
+        run: |
+          sudo virt-sparsify *.qcow2 test1.qcow2
+          sudo virt-sparsify *.qcow2 --compress test2.qcow2
+          
+        # sudo virt-sparsify --in-place *.qcow2
         # run: sudo virt-sparsify --compress --in-place *.qcow2
 
       - name: Cleanup second fase
-        run: sudo virt-sparsify *.qcow2 --compress test.qcow2
+        run: 
 
       - name: Upload artifacts
         run: |
