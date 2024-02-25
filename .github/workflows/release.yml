@@ -49,6 +49,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
+  # Rebuild images
   rebuild-images:
     name: Rebuild ${{ matrix.variant }} image
     needs: [release, download]
@@ -91,7 +92,7 @@ jobs:
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
           sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
-          [[ "${{ matrix.variant }}" != "qemu" ]] && rm ${SOURCE_FILE}
+          sudo rm ${SOURCE_FILE}
 
       - name: Upload artifacts
         run: |
