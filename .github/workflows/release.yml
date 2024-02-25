@@ -17,43 +17,34 @@ env:
 
 jobs:
   release:
-    # uses: ubimetrics/test/.github/workflows/release-create.yml@${{ github.ref_name }}
-    uses: ubimetrics/test/.github/workflows/release-create.yml@main
-
-    # runs-on: ubuntu-latest
-
-    # steps:
-    #   - name: to-be-deleted
-    #     run: echo "To be deleted!"
-  
-  #     - name: Create release draft
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         gh release create "${GITHUB_REF_NAME}" \
-  #             --repo="${GITHUB_REPOSITORY}" \
-  #             --title="${GITHUB_REF_NAME}" \
-  #             --generate-notes \
-  #             --latest \
-  #             --draft
+    name: Create release
+    uses: ./.github/workflows/release-create.yml
 
   download:
     name: Download image
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/download-image.yml
+    with:
+      debian-version: ${{ env.DEBIAN_VERSION }}
+      debian-vername: ${{ env.DEBIAN_VERNAME }}
+      debian-release: ${{ env.DEBIAN_RELEASE }}
 
-    steps:
-      - name: Cache image
-        uses: actions/cache@v4
-        id: cache
-        with:
-          key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-          path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  # download:
+  #   name: Download image
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Cache image
+  #       uses: actions/cache@v4
+  #       id: cache
+  #       with:
+  #         key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+  #         path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
     
-      - name: Download image
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
-            "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
+  #     - name: Download image
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: |
+  #         wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
+  #           "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
 
   build-cloudimage:
     runs-on: ubuntu-latest
