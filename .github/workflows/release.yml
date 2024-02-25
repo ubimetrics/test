@@ -91,6 +91,7 @@ jobs:
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
           echo sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
+          cp ${SOURCE_FILE} ${TARGET_FILE}
           rm ${SOURCE_FILE}
 
       - name: Upload artifacts
