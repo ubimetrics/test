@@ -106,11 +106,11 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y libguestfs-tools
 
-      - name: Rebuild image
-        run: |
-          sudo virt-customize -a *.qcow2 --verbose \
-            --run-command "apt-get clean"
-            # --install sl \
+      # - name: Rebuild image
+      #   run: |
+      #     sudo virt-customize -a *.qcow2 --verbose \
+      #       --run-command "apt-get clean"
+      #       # --install sl \
         
       - name: Upload artifacts
         run: |
