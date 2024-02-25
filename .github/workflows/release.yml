@@ -103,7 +103,7 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 \
-            --install qemu-guest-agent,locales-all,htop
+            --install htop
         
       - name: Upload artifacts
         run: |
