@@ -49,7 +49,7 @@ jobs:
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
   rebuild-cloud-image:
-    name: Rebuild cloud image
+    name: Rebuild ${{ matrix.subdir }} image
     needs: [release, download]
     runs-on: ubuntu-latest
     strategy:
@@ -92,33 +92,33 @@ jobs:
       #     # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
       #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
-  rebuild-docker-image:
-    name: Rebuild docker image
-    needs: [release, download]
-    runs-on: ubuntu-latest
+  # rebuild-docker-image:
+  #   name: Rebuild docker image
+  #   needs: [release, download]
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      # - name: Cache image
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
-      #     path: "*.qcow2"
+  # - name: Cache image
+  #   uses: actions/cache/restore@v4
+  #   with:
+  #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+  #     path: "*.qcow2"
 
-      # - name: Install libguestfs
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y libguestfs-tools
+  # - name: Install libguestfs
+  #   run: |
+  #     sudo apt-get update -y
+  #     sudo apt-get install -y libguestfs-tools
 
-      # # - name: Rebuild image
-      # #   run: |
-      # #     sudo virt-customize -a *.qcow2 --verbose \
-      # #       --run-command "apt-get clean"
-      # #       # --install sl \
+  # # - name: Rebuild image
+  # #   run: |
+  # #     sudo virt-customize -a *.qcow2 --verbose \
+  # #       --run-command "apt-get clean"
+  # #       # --install sl \
 
-      # - name: Upload artifacts
-      #   run: |
-      #     mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
-      #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
+  # - name: Upload artifacts
+  #   run: |
+  #     mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
+  #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
