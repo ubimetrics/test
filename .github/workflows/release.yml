@@ -68,17 +68,17 @@ jobs:
           key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
           path: "*.qcow2"
 
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libguestfs-tools
+
       - name: Upload original image
         run: |
           echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
           echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
         # run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
-
-      - name: Install libguestfs
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
         run: |
