@@ -54,7 +54,7 @@ jobs:
           # wget -O "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
           #   "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
 
-  rebuild-cloudimage:
+  rebuild-cloud-image:
     name: Rebuild cloud image
     runs-on: ubuntu-latest
     needs:
@@ -133,3 +133,25 @@ jobs:
       - name: to-be-deleted
         run: echo "To be deleted!"
 
+
+  upload-cloud-image:
+    name: Upload cloud image
+    runs-on: ubuntu-latest
+    needs:
+      - release
+      - rebuild-cloud-image
+
+    steps:      
+      - name: to-be-deleted
+        run: echo "To be deleted!"
+        
+  upload-docker-image:
+    name: Upload docker image
+    runs-on: ubuntu-latest
+    needs:
+      - release
+      - rebuild-docker-image
+
+    steps:      
+      - name: to-be-deleted
+        run: echo "To be deleted!"
