@@ -76,8 +76,8 @@ jobs:
 
       - name: Cleanup image
         run: |
-          sudo virt-sparsify *.qcow2 test1.qcow2
-          sudo virt-sparsify *.qcow2 --compress test2.qcow2
+          sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
+          sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
           
         # sudo virt-sparsify --in-place *.qcow2
         # run: sudo virt-sparsify --compress --in-place *.qcow2
