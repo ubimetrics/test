@@ -49,10 +49,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
-      - name: Upload original image to release
-        run: |
-          gh release upload "${GITHUB_REF_NAME}" *.qcow2
-
   # Rebuild images
   rebuild-images:
     name: Rebuild ${{ matrix.variant }} image
@@ -71,6 +67,10 @@ jobs:
         with:
           key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
           path: "*.qcow2"
+
+      - name: Upload original image
+        run: |
+          gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - name: Install libguestfs
         run: |
@@ -98,6 +98,6 @@ jobs:
           sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
           sudo rm ${SOURCE_FILE}
 
-      - name: Upload image to release
+      - name: Upload custom image
         run: |
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
