@@ -74,8 +74,14 @@ jobs:
       #     sudo apt-get update -y
       #     sudo apt-get install -y libguestfs-tools
 
-      # - name: Rebuild image
-      #   run: |
+      - name: Rebuild image
+        run: |
+          declare -A pkgs
+          pkgs=(
+            [qemu]=qemu-guest-agent
+            [locales]=locales-all
+          )
+          echo ${pkgs[${{ matrix.variant }}]}
       #     sudo virt-customize -a *.qcow2 \
       #       --install qemu-guest-agent \
       #       --run-command "apt-get clean"
