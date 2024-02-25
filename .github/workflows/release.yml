@@ -36,7 +36,6 @@ jobs:
   download:
     name: Download image
     runs-on: ubuntu-latest
-
     steps:
       - name: Cache image
         uses: actions/cache@v4
@@ -55,63 +54,53 @@ jobs:
           #   "https://cloud.debian.org/images/cloud/${DEBIAN_VERNAME}/${DEBIAN_RELEASE}/debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2"
 
   rebuild-cloud-image:
-    name: Rebuild cloud image
+    name: Rebuild and upload cloud image
     needs: [release, download]
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
 
     steps:
       - name: Cache image
         uses: actions/cache@v4
-        id: cache
         with:
           key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
           path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-      
-      - name: to-be-deleted
-        run: echo "To be deleted!"
 
-      # - name: Checkout
-      #   uses: actions/checkout@v4
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libguestfs-tools
 
-      # - name: Install libguestfs
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y libguestfs-tools
+      - name: Build image
+        run: |
+          sudo virt-customize -a "${IMAGE_FILENAME}" \
+            --install qemu-guest-agent \
+            --install locales-all \
+            --install htop
 
-      # - name: Download image
-      #   run: |
-      #     source settings.sh
-      #     wget -O "$IMAGE_FILE" "$IMAGE_PATH"
+  upload-cloud-image:
+    name: Upload cloud image
+    needs: rebuild-cloud-image
+    runs-on: ubuntu-latest
 
-      # - name: Build image
-      #   run: |
-      #     echo "cloudimage" > build.log
-      #     cat README.md
+    env:
+      IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
 
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: debian-cloudimage
-      #     path: build.log
-      #     retention-days: 1
+    steps:
+      - name: Cache image
+        uses: actions/cache@v4
+        with:
+          key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
+          path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
 
-  # publish-cloudimage:
-  #   runs-on: ubuntu-latest
-  #   needs: build-cloudimage
+      - name: Upload artifacts
+        # run: gh release upload "${GITHUB_REF_NAME}" "${IMAGE_FILE}"
+        run: gh release upload "debian-$DEBIAN_VERSION-$DEBIAN_RELEASE" "${IMAGE_FILENAME}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: debian-cloudimage
-
-  #     - name: Publish image
-  #       run: |
-  #         cat build.log
-  #         cat README.md
 
   rebuild-docker-image:
     name: Rebuild docker image
@@ -125,19 +114,6 @@ jobs:
         with:
           key: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
           path: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-      
-      - name: to-be-deleted
-        run: echo "To be deleted!"
-
-
-  upload-cloud-image:
-    name: Upload cloud image
-    needs: rebuild-cloud-image
-    runs-on: ubuntu-latest
-
-    steps:      
-      - name: to-be-deleted
-        run: echo "To be deleted!"
         
   upload-docker-image:
     name: Upload docker image
