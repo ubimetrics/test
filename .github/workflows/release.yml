@@ -11,9 +11,9 @@ permissions:
   contents: write
 
 env:
-  DEBIAN_VERSION: 12
-  DEBIAN_VERNAME: bookworm
-  DEBIAN_RELEASE: 20240201-1644
+  DEBIAN_VERSION: "12"
+  DEBIAN_VERNAME: "bookworm"
+  DEBIAN_RELEASE: "20240201-1644"
 
 jobs:
   release:
