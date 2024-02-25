@@ -58,9 +58,6 @@ jobs:
     needs: [release, download]
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-
     steps:
       - name: Cache image
         uses: actions/cache@v4
@@ -74,6 +71,8 @@ jobs:
           sudo apt-get install -y libguestfs-tools
 
       - name: Build image
+        env:
+          IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
         run: |
           sudo virt-customize -a "${IMAGE_FILENAME}" \
             --install qemu-guest-agent \
