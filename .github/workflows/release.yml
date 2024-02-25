@@ -67,11 +67,11 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y libguestfs-tools
 
-      # - name: Rebuild image
-      #   run: |
-      #     sudo virt-customize -a *.qcow2 --verbose \
-      #       --install qemu-guest-agent,locales-all,htop \
-      #       --run-command "apt-get clean"
+      - name: Rebuild image
+        run: |
+          sudo virt-customize -a *.qcow2 --verbose \
+            # --install qemu-guest-agent,locales-all,htop \
+            --run-command "apt-get clean"
 
       - name: Cleanup image
         run: |
