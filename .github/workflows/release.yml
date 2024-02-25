@@ -67,10 +67,10 @@ jobs:
           key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
           path: "*.qcow2"
 
-      # - name: Install libguestfs
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y libguestfs-tools
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
         run: |
@@ -81,7 +81,7 @@ jobs:
             [locales]=qemu-guest-agent,locales-all
             [extra]=qemu-guest-agent,locales-all,htop
           )
-          echo sudo virt-customize -a *.qcow2 \
+          sudo virt-customize -a *.qcow2 \
             --install ${packages[${{ matrix.variant }}]} \
             --run-command "apt-get clean"
 
@@ -91,42 +91,8 @@ jobs:
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
           echo sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
-          cp ${SOURCE_FILE} ${TARGET_FILE}
-          rm ${SOURCE_FILE}
+          [[ "${{ matrix.variant }}" != "qemu" ]] && echo rm ${SOURCE_FILE}
 
       - name: Upload artifacts
         run: |
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
-
-  # rebuild-docker-image:
-  #   name: Rebuild docker image
-  #   needs: [release, download]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  # - name: Cache image
-  #   uses: actions/cache/restore@v4
-  #   with:
-  #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
-  #     path: "*.qcow2"
-
-  # - name: Install libguestfs
-  #   run: |
-  #     sudo apt-get update -y
-  #     sudo apt-get install -y libguestfs-tools
-
-  # # - name: Rebuild image
-  # #   run: |
-  # #     sudo virt-customize -a *.qcow2 --verbose \
-  # #       --run-command "apt-get clean"
-  # #       # --install sl \
-
-  # - name: Upload artifacts
-  #   run: |
-  #     mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
-  #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
-
-            # --install qemu-guest-agent,locales-all,htop
