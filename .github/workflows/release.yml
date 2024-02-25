@@ -38,6 +38,9 @@ jobs:
     name: Download image
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - id: cache
         name: Cache image
         uses: actions/cache@v4
@@ -50,9 +53,7 @@ jobs:
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
       - name: Upload original image artifact
-        run: |
-          ls -lh *.qcow2
-          gh release upload "${{ github.ref_name }}" *.qcow2
+        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
   # Rebuild images
   rebuild-images:
@@ -77,14 +78,6 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libguestfs-tools
-
-      # - name: Upload original image
-      #   run: |
-      #     ls -lh *.qcow2
-      #     echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
-      #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
-      #     echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
-        # run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - name: Rebuild image
         run: |
