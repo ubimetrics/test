@@ -69,7 +69,10 @@ jobs:
           path: "*.qcow2"
 
       - name: Upload original image
-        run: echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
+        run: |
+          echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
+          gh release upload "${GITHUB_REF_NAME}" *.qcow2
+          echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
         # run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - name: Install libguestfs
