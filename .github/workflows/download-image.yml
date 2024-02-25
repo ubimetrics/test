@@ -1,4 +1,4 @@
-name: Create release
+name: Download image
 
 on:
   workflow_call:
