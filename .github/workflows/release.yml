@@ -23,8 +23,8 @@ jobs:
   download:
     name: Download image
     uses: ./.github/workflows/download-image.yml
-    with:
-      debian-version: ${{ env.DEBIAN_VERSION }}
+    # with:
+      # debian-version: ${{ env.DEBIAN_VERSION }}
       # debian-vername: ${{ env.DEBIAN_VERNAME }}
       # debian-release: ${{ env.DEBIAN_RELEASE }}
 
