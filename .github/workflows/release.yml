@@ -25,7 +25,7 @@ jobs:
     steps:  
       - name: Create release draft
         run: |
-          echo gh release create "${GITHUB_REF_NAME}" \
+          gh release create "${GITHUB_REF_NAME}" \
               --repo="${GITHUB_REPOSITORY}" \
               --title="${GITHUB_REF_NAME}" \
               --generate-notes \
@@ -71,10 +71,14 @@ jobs:
         run: |
           sudo virt-customize -a *.qcow2 \
             --install qemu-guest-agent,locales-all,htop
+
+      - name: Cleanup image
+        run: sudo virt-sparsify --in-place *.qcow2
         
       - name: Upload artifacts
         run: |
-          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
+          # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
+          gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
   rebuild-docker-image:
     name: Rebuild docker image
