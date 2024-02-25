@@ -49,8 +49,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
-  rebuild-qemu-image:
-    name: Rebuild cloud image
+  rebuild-images:
+    name: Rebuild ${{ matrix.variant }} image
     needs: [release, download]
     runs-on: ubuntu-latest
     strategy:
@@ -81,17 +81,17 @@ jobs:
             [locales]=qemu-guest-agent,locales-all
             [extra]=qemu-guest-agent,locales-all,htop
           )
-          echo ${packages[${{ matrix.variant }}]}
-      #     sudo virt-customize -a *.qcow2 \
-      #       --install qemu-guest-agent \
-      #       --run-command "apt-get clean"
+          echo sudo virt-customize -a *.qcow2 \
+            --install ${packages[${{ matrix.variant }}]} \
+            --run-command "apt-get clean"
 
       - name: Compress image
         run: |
           # Compress image
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
-          echo sudo virt-sparsify $SOURCE_FILE --compress $TARGET_FILE
+          echo sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
+          rm ${SOURCE_FILE}
 
       - name: Upload artifacts
         run: |
