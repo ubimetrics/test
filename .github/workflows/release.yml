@@ -16,17 +16,26 @@ env:
   DEBIAN_RELEASE: "20240201-1644"
 
 jobs:
-  release:
+  xelease:
     name: Create
     uses: ./.github/workflows/release-create.yml
 
-  # download:
-    # name: Download
-    # uses: ./.github/workflows/download-image.yml
-    # with:
-      # debian-version: "12"
-      # debian-vername: ${{ env.DEBIAN_VERNAME }}
-      # debian-release: ${{ env.DEBIAN_RELEASE }}
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+
+    steps:  
+      - name: Create release draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "To be deleted!"
+  #       run: |
+  #         gh release create "${GITHUB_REF_NAME}" \
+  #             --repo="${GITHUB_REPOSITORY}" \
+  #             --title="${GITHUB_REF_NAME}" \
+  #             --generate-notes \
+  #             --latest \
+  #             --draft
 
   download:
     name: Download image
