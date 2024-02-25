@@ -6,12 +6,15 @@ on:
       debian-version:
         description: 'A Debian image version to be downloaded'
         default: '12'
+        type: string
       debian-vername:
         description: 'A Debian image version name to be downloaded'
         default: 'bookworm'
+        type: string
       debian-release:
         description: 'A Debian image release to be downloaded'
         default: '20240201-1644'
+        type: string
     
 jobs:
   download:
