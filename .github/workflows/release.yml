@@ -90,8 +90,8 @@ jobs:
           # Compress image
           SOURCE_FILE="$(ls *.qcow2)"
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
-          echo sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
-          [[ "${{ matrix.variant }}" != "qemu" ]] && echo rm ${SOURCE_FILE}
+          sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
+          [[ "${{ matrix.variant }}" != "qemu" ]] && rm ${SOURCE_FILE}
 
       - name: Upload artifacts
         run: |
