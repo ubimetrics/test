@@ -15,7 +15,7 @@ env:
   DEBIAN_VERSION: "12"
   DEBIAN_VERNAME: "bookworm"
   DEBIAN_RELEASE: "20240201-1644"
-  IMAGE_FILENAME: "debian-12-genericcloud-amd64-20240201-1644.qcow2"
+  DEBIAN_VARIANT: "genericcloud-amd64"
 
 jobs:
   release:
@@ -24,14 +24,13 @@ jobs:
 
     steps:  
       - name: Create release draft
-        run: echo "To be deleted!"
-  #       run: |
-  #         gh release create "${GITHUB_REF_NAME}" \
-  #             --repo="${GITHUB_REPOSITORY}" \
-  #             --title="${GITHUB_REF_NAME}" \
-  #             --generate-notes \
-  #             --latest \
-  #             --draft
+        run: |
+          echo gh release create "${GITHUB_REF_NAME}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${GITHUB_REF_NAME}" \
+              --generate-notes \
+              --latest \
+              --draft
 
   download:
     name: Download image
@@ -41,14 +40,12 @@ jobs:
         name: Cache image
         uses: actions/cache@v4
         with:
-          key: ${{ env.IMAGE_FILENAME }}
-          path: ${{ env.IMAGE_FILENAME }}
-    
+          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+          path: *.qcow2
+
       - name: Download image
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          wget -O "$IMAGE_FILENAME" \
-            "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/$IMAGE_FILENAME"
+        run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
   rebuild-cloud-image:
     name: Rebuild cloud image
@@ -56,39 +53,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Cache image
         uses: actions/cache/restore@v4
         with:
-          key: ${{ env.IMAGE_FILENAME }}
-          path: ${{ env.IMAGE_FILENAME }}
-
-      - name: Install libguestfs
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libguestfs-tools
-
-      - name: Rebuild image
-        run: |
-          sudo virt-customize -a "debian-${DEBIAN_VERSION}-genericcloud-amd64-${DEBIAN_RELEASE}.qcow2" \
-            --install qemu-guest-agent \
-            --install locales-all \
-            --install htop
-        
-      - name: Upload artifacts
-        run: |
-          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
-
-  rebuild-docker-image:
-    name: Rebuild docker image
-    needs: [release, download]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Cache image
-        uses: actions/cache/restore@v4
-        with:
-          key: ${{ env.IMAGE_FILENAME }}
-          path: ${{ env.IMAGE_FILENAME }}
+          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+          path: *.qcow2
 
       - name: Install libguestfs
         run: |
@@ -102,5 +74,34 @@ jobs:
         
       - name: Upload artifacts
         run: |
-          mv *.qcow2 new.qcow2
+          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
+
+  rebuild-docker-image:
+    name: Rebuild docker image
+    needs: [release, download]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache image
+        uses: actions/cache/restore@v4
+        with:
+          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+          path: *.qcow2
+
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libguestfs-tools
+
+      - name: Rebuild image
+        run: |
+          sudo virt-customize -a *.qcow2 \
+            --install qemu-guest-agent,locales-all,htop
+        
+      - name: Upload artifacts
+        run: |
+          mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
