@@ -70,13 +70,17 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 \
-            --install sl \
             --run-command "apt-get clean"
+            # --install sl \
             #--install qemu-guest-agent,locales-all,htop
 
       - name: Cleanup image
-        run: sudo virt-sparsify --compress --in-place *.qcow2
-        
+        run: sudo virt-sparsify --in-place *.qcow2
+        # run: sudo virt-sparsify --compress --in-place *.qcow2
+
+      - name: Cleanup second fase
+        run: sudo virt-sparsify *.qcow2 --compress test.qcow2
+
       - name: Upload artifacts
         run: |
           # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
@@ -105,8 +109,8 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 --verbose \
-            --install sl \
             --run-command "apt-get clean"
+            # --install sl \
         
       - name: Upload artifacts
         run: |
