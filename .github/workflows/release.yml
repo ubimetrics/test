@@ -69,7 +69,8 @@ jobs:
 
       - name: Rebuild image
         run: |
-          sudo virt-customize -a *.qcow2 --verbose \
+          sudo virt-customize -a *.qcow2 \
+            --install locales-all \
             --run-command "apt-get clean"
             # --install qemu-guest-agent,locales-all,htop \
 
@@ -77,6 +78,7 @@ jobs:
         run: |
           sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
           sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
+          ls -lh *.qcow2
           
         # sudo virt-sparsify --in-place *.qcow2
         # run: sudo virt-sparsify --compress --in-place *.qcow2
