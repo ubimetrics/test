@@ -56,10 +56,8 @@ jobs:
 
   rebuild-cloud-image:
     name: Rebuild cloud image
+    needs: [release, download]
     runs-on: ubuntu-latest
-    needs:
-      # - release
-      - download
 
     steps:
       - name: Cache image
@@ -117,10 +115,8 @@ jobs:
 
   rebuild-docker-image:
     name: Rebuild docker image
+    needs: [release, download]
     runs-on: ubuntu-latest
-    needs:
-      # - release
-      - download
 
     steps:
       - name: Cache image
@@ -136,10 +132,8 @@ jobs:
 
   upload-cloud-image:
     name: Upload cloud image
+    needs: rebuild-cloud-image
     runs-on: ubuntu-latest
-    needs:
-      - release
-      - rebuild-cloud-image
 
     steps:      
       - name: to-be-deleted
@@ -147,10 +141,8 @@ jobs:
         
   upload-docker-image:
     name: Upload docker image
+    needs: rebuild-docker-image
     runs-on: ubuntu-latest
-    needs:
-      - release
-      - rebuild-docker-image
 
     steps:      
       - name: to-be-deleted
