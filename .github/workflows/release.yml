@@ -18,6 +18,7 @@ env:
   DEBIAN_VARIANT: "genericcloud-amd64"
 
 jobs:
+  # Create a new release based on current tag name
   release:
     name: Create release
     runs-on: ubuntu-latest
@@ -31,7 +32,7 @@ jobs:
               --generate-notes \
               --latest \
               --draft
-
+  # Download Debian base cloud image
   download:
     name: Download image
     runs-on: ubuntu-latest
@@ -51,42 +52,45 @@ jobs:
     name: Rebuild cloud image
     needs: [release, download]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subdir: [sub1, sub2]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache image
-        uses: actions/cache/restore@v4
-        with:
-          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
-          path: "*.qcow2"
+      # - name: Cache image
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+      #     path: "*.qcow2"
 
-      - name: Install libguestfs
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libguestfs-tools
+      # - name: Install libguestfs
+      #   run: |
+      #     sudo apt-get update -y
+      #     sudo apt-get install -y libguestfs-tools
 
-      - name: Rebuild image
-        run: |
-          sudo virt-customize -a *.qcow2 \
-            --install qemu-guest-agent,htop \
-            --run-command "apt-get clean"
-            # --install qemu-guest-agent,locales-all,htop
+      # - name: Rebuild image
+      #   run: |
+      #     sudo virt-customize -a *.qcow2 \
+      #       --install qemu-guest-agent,htop \
+      #       --run-command "apt-get clean"
+      #       # --install qemu-guest-agent,locales-all,htop
 
-      - name: Cleanup image
-        run: |
-          sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
-          sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
-          ls -lh *.qcow2
+      # - name: Cleanup image
+      #   run: |
+      #     sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
+      #     sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
+      #     ls -lh *.qcow2
 
-        # sudo virt-sparsify --in-place *.qcow2
-        # run: sudo virt-sparsify --compress --in-place *.qcow2
+      #   # sudo virt-sparsify --in-place *.qcow2
+      #   # run: sudo virt-sparsify --compress --in-place *.qcow2
 
-      - name: Upload artifacts
-        run: |
-          # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
-          gh release upload "${GITHUB_REF_NAME}" *.qcow2
+      # - name: Upload artifacts
+      #   run: |
+      #     # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
+      #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
   rebuild-docker-image:
     name: Rebuild docker image
@@ -97,24 +101,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache image
-        uses: actions/cache/restore@v4
-        with:
-          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
-          path: "*.qcow2"
+      # - name: Cache image
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+      #     path: "*.qcow2"
 
-      - name: Install libguestfs
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libguestfs-tools
-
-      # - name: Rebuild image
+      # - name: Install libguestfs
       #   run: |
-      #     sudo virt-customize -a *.qcow2 --verbose \
-      #       --run-command "apt-get clean"
-      #       # --install sl \
+      #     sudo apt-get update -y
+      #     sudo apt-get install -y libguestfs-tools
 
-      - name: Upload artifacts
-        run: |
-          mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
-          gh release upload "${GITHUB_REF_NAME}" *.qcow2
+      # # - name: Rebuild image
+      # #   run: |
+      # #     sudo virt-customize -a *.qcow2 --verbose \
+      # #       --run-command "apt-get clean"
+      # #       # --install sl \
+
+      # - name: Upload artifacts
+      #   run: |
+      #     mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
+      #     gh release upload "${GITHUB_REF_NAME}" *.qcow2
