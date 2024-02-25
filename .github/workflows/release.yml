@@ -70,7 +70,7 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 \
-            --install locales-all \
+            --install qemu-guest-agent \
             --run-command "apt-get clean"
             # --install qemu-guest-agent,locales-all,htop \
 
