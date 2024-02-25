@@ -103,7 +103,7 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a *.qcow2 \
-            --install htop
+            --install vi
         
       - name: Upload artifacts
         run: |
