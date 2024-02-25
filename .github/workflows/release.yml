@@ -18,12 +18,13 @@ env:
 jobs:
   release:
     # uses: ubimetrics/test/.github/workflows/release-create.yml@${{ github.ref_name }}
+    uses: ubimetrics/test/.github/workflows/release-create.yml@main
 
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
 
-    steps:
-      - name: to-be-deleted
-        run: echo "To be deleted!"
+    # steps:
+    #   - name: to-be-deleted
+    #     run: echo "To be deleted!"
   
   #     - name: Create release draft
   #       env:
