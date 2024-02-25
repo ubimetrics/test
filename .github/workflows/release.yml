@@ -82,9 +82,6 @@ jobs:
         # sudo virt-sparsify --in-place *.qcow2
         # run: sudo virt-sparsify --compress --in-place *.qcow2
 
-      - name: Cleanup second fase
-        run: 
-
       - name: Upload artifacts
         run: |
           # gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
