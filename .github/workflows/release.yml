@@ -75,6 +75,7 @@ jobs:
 
       - name: Upload original image
         run: |
+          ls -lh *.qcow2
           echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
           echo gh release upload "${GITHUB_REF_NAME}" *.qcow2
