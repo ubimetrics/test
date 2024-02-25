@@ -5,13 +5,13 @@ on:
   push:
     tags:
       - debian*
-  
+
 permissions:
   contents: write
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   DEBIAN_VERSION: "12"
   DEBIAN_VERNAME: "bookworm"
   DEBIAN_RELEASE: "20240201-1644"
@@ -22,7 +22,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
 
-    steps:  
+    steps:
       - name: Create release draft
         run: |
           gh release create "${GITHUB_REF_NAME}" \
@@ -72,14 +72,14 @@ jobs:
           sudo virt-customize -a *.qcow2 \
             --install qemu-guest-agent,htop \
             --run-command "apt-get clean"
-            # --install qemu-guest-agent,locales-all,htop \
+            # --install qemu-guest-agent,locales-all,htop
 
       - name: Cleanup image
         run: |
           sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 test1.qcow2
           sudo virt-sparsify debian-12-genericcloud-amd64-20240201-1644.qcow2 --compress test2.qcow2
           ls -lh *.qcow2
-          
+
         # sudo virt-sparsify --in-place *.qcow2
         # run: sudo virt-sparsify --compress --in-place *.qcow2
 
@@ -113,7 +113,7 @@ jobs:
       #     sudo virt-customize -a *.qcow2 --verbose \
       #       --run-command "apt-get clean"
       #       # --install sl \
-        
+
       - name: Upload artifacts
         run: |
           mv *.qcow2 "debian-12-docker-amd64-20240201-1644.qcow2"
