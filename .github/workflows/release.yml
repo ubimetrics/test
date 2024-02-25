@@ -76,7 +76,7 @@ jobs:
         
       - name: Upload artifacts
         run: |
-          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" "*.qcow2"
+          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" *.qcow2
 
   rebuild-docker-image:
     name: Rebuild docker image
@@ -97,11 +97,10 @@ jobs:
 
       - name: Rebuild image
         run: |
-          sudo virt-customize -a "*.qcow2" \
-            --install qemu-guest-agent \
-            --install locales-all \
-            --install htop
+          sudo virt-customize -a *.qcow2 \
+            --install qemu-guest-agent,locales-all,htop
         
       - name: Upload artifacts
         run: |
-          gh release upload "debian-${DEBIAN_VERSION}-${DEBIAN_RELEASE}" "*.qcow2"
+          mv *.qcow2 new.qcow2
+          gh release upload "${GITHUB_REF_NAME}" *.qcow2
