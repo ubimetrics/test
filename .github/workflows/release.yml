@@ -84,9 +84,6 @@ jobs:
     needs: rebuild-cloud-image
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
-
     steps:
       - name: Cache image
         uses: actions/cache@v4
@@ -99,7 +96,7 @@ jobs:
         run: gh release upload "debian-$DEBIAN_VERSION-$DEBIAN_RELEASE" "${IMAGE_FILENAME}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          IMAGE_FILENAME: debian-${{ env.DEBIAN_VERSION }}-genericcloud-amd64-${{ env.DEBIAN_RELEASE }}.qcow2
 
   rebuild-docker-image:
     name: Rebuild docker image
