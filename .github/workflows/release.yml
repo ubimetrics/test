@@ -49,6 +49,10 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
+      - name: Upload original image to release
+        run: |
+          gh release upload "${GITHUB_REF_NAME}" *.qcow2
+
   # Rebuild images
   rebuild-images:
     name: Rebuild ${{ matrix.variant }} image
@@ -56,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        variant: [qemu, locales, extra]
+        variant: [qemu, locales, extras]
 
     steps:
       - name: Checkout
@@ -80,7 +84,7 @@ jobs:
           packages=(
             [qemu]=qemu-guest-agent
             [locales]=qemu-guest-agent,locales-all
-            [extra]=qemu-guest-agent,locales-all,htop
+            [extras]=qemu-guest-agent,locales-all,htop
           )
           sudo virt-customize -a *.qcow2 \
             --install ${packages[${{ matrix.variant }}]} \
@@ -94,6 +98,6 @@ jobs:
           sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
           sudo rm ${SOURCE_FILE}
 
-      - name: Upload artifacts
+      - name: Upload image to release
         run: |
           gh release upload "${GITHUB_REF_NAME}" *.qcow2
