@@ -25,7 +25,7 @@ echo "$@"
 echo "---2"
 
 # Export variables to github workflow next steps
-cat <<EOF >> "$GITHUB_ENV"
+cat >> "$GITHUB_ENV" <<-EOF
 	DEBIAN_VERSION="$DEBIAN_VERSION"
 	DEBIAN_VERNAME="$DEBIAN_VERNAME"
 	DEBIAN_RELEASE="$DEBIAN_RELEASE"
