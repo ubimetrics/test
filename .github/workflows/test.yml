@@ -50,7 +50,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Download image
-        run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
+        run: wget "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
         if: steps.cache.outputs.cache-hit != 'true'
 
     # --
