@@ -4,3 +4,5 @@ echo "This is test workflow"
 echo ---
 echo $@
 echo ---
+
+echo $GITHUB_ENV
