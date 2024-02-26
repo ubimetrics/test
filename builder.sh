@@ -10,12 +10,14 @@ function function_exists() {
 }
 
 function do_relase() {
-	echo gh release create "${GITHUB_REF_NAME}" \
-		--repo="${GITHUB_REPOSITORY}" \
-		--title="${GITHUB_REF_NAME}" \
-		--generate-notes \
-		--latest \
-		--draft
+	# echo gh release create "${GITHUB_REF_NAME}" \
+	# 	--repo="${GITHUB_REPOSITORY}" \
+	# 	--title="${GITHUB_REF_NAME}" \
+	# 	--generate-notes \
+	# 	--latest \
+	# 	--draft
+
+	echo gh release create --verify-tag
 }
 
 echo "---1"
