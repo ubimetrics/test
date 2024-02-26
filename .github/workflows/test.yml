@@ -72,20 +72,8 @@ jobs:
           # sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
-        run: ./customize.sh qemu
+        run: ./customize.sh qemu ${{ env.IMAGE_FILENAME }}
         # run: ./customize.sh ${{ matrix.variant }}
-        
-        # run: |
-        #   # Install packages
-        #   declare -A packages
-        #   packages=(
-        #     [qemu]=qemu-guest-agent
-        #     [locales]=qemu-guest-agent,locales-all
-        #     [extras]=qemu-guest-agent,locales-all,htop
-        #   )
-        #   sudo virt-customize -a *.qcow2 \
-        #     --install ${packages[${{ matrix.variant }}]} \
-        #     --run-command "apt-get clean"
 
       - name: Compress image artifact
         run: |

@@ -2,6 +2,7 @@
 # shellcheck disable=SC2054
 
 echo "***> $1 <***"
+echo "***> $2 <***"
 
 declare -A packages
 packages=(
