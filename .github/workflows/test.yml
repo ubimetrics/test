@@ -27,9 +27,8 @@ jobs:
     #     uses: ./.github/actions/create-release
 
     steps:
-      - uses: actions/checkout@v4
       - name: Create release draft
-        uses: ubimetrics/test/.github/actions/create-release@main
+        uses: ubimetrics/test/.github/actions/create-release@${{ github.ref }}
 
   # Download
   download:
@@ -40,20 +39,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download
-        run: echo Download
+      # - name: Cache image
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+      #     path: "*.qcow2"
+      #   id: cache
 
-      - name: Test 1
-        run: echo $DEBIAN_RELEASE
+      # - name: Download image
+      #   if: steps.cache.outputs.cache-hit != 'true'
+      #   run: echo Downloading file...
+      #   #run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
-      - name: Test 2
-        run: ./builder.sh aaa 111
-
-      - name: Test 3
-        run: echo $DEBIAN_RELEASE
-
-      - name: Test 4
-        run: echo ${{ env.DEBIAN_RELEASE }}
-
-      - name: Test 5
-        run: ./builder.sh bbb 222
+      # - name: Upload original image artifact
+      #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
