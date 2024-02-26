@@ -57,6 +57,10 @@ jobs:
     needs: [download]
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        variant: [qemu, locales, extras]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,6 +97,10 @@ jobs:
     name: Upload image artifact
     needs: [release, customize-image]
     runs-on: ubuntu-latest
+
+    # strategy:
+    #   matrix:
+    #     variant: [qemu, locales, extras]
 
     steps:
       - name: Checkout
