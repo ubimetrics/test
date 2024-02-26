@@ -77,7 +77,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: images
+          name: ${{ matrix.variant }}-image
           path: "*.qcow2"
 
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
