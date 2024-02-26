@@ -54,7 +54,7 @@ jobs:
         uses: ./.github/actions/smart-cache
 
       - name: Install libguestfs
-        run: |
+        run: sudo apt-get install -y libguestfs-tools
           # sudo apt-get update -y
           # sudo apt-get install -y libguestfs-tools
 

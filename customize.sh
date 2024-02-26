@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2054
 
-echo "***> $1 <***"
-echo "***> $2 <***"
+set -e
+
+IMAGE_FILENAME="$1"
+DEBIAN_VARIANT="$2"
 
 declare -A packages
 packages=(
@@ -12,6 +14,6 @@ packages=(
 )
 
 # Install packages
-echo sudo virt-customize -a *.qcow2 \
-    --install "${packages[$1]}" \
+echo sudo virt-customize -a "$IMAGE_FILENAME" \
+    --install "${packages[$DEBIAN_VARIANT]}" \
     --run-command "apt-get clean"

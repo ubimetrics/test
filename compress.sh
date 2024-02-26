@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SOURCE_FILE="$1"
 TARGET_FILE="${SOURCE_FILE/genericcloud/$2}"
 
