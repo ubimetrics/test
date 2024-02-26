@@ -72,7 +72,9 @@ jobs:
           # sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
-        run: ./customize.sh
+        run: ./customize.sh qemu
+        # run: ./customize.sh ${{ matrix.variant }}
+        
         # run: |
         #   # Install packages
         #   declare -A packages
