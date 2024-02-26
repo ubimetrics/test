@@ -100,7 +100,7 @@ jobs:
 
     strategy:
       matrix:
-        variant: ${{ needs.customize-image.strategy.matrix.* }}
+        variant: ${{ needs.customize-image.strategy.matrix.variant }}
 
     steps:
       - name: Checkout
