@@ -3,8 +3,9 @@
 
 set -e
 
-IMAGE_FILENAME="$1"
-DEBIAN_VARIANT="$2"
+# Source and target files
+SOURCE_FILE="$1"
+TARGET_FILE="${SOURCE_FILE/genericcloud/$2}"
 
 declare -A packages
 packages=(
@@ -14,6 +15,9 @@ packages=(
 )
 
 # Install packages
-sudo virt-customize -a "$IMAGE_FILENAME" \
-    --install "${packages[$DEBIAN_VARIANT]}" \
+sudo virt-customize -a "$SOURCE_FILE" \
+    --install "${packages[$2]}" \
     --run-command "apt-get clean"
+
+# Export ARTIFACT_NAME variable to github workflow
+echo "ARTIFACT_NAME=$TARGET_FILE" >> "$GITHUB_ENV"
