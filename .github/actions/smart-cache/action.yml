@@ -12,3 +12,6 @@ runs:
         key: ${{ env.GIT_CACHE_NAME }}
         path: ${{ env.GIT_CACHE_PATH }}
       id: cache
+    # - name: Set color
+    #   id: color-selector
+    #   run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"

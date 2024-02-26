@@ -28,7 +28,7 @@ jobs:
 
   # Download
   download:
-    name: Download
+    name: Download image
     runs-on: ubuntu-latest
 
     steps:
@@ -38,17 +38,17 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - run: echo ${{ env.GIT_CACHE_NAME }}
-      - run: echo ${{ env.GIT_CACHE_PATH }}
-      - run: echo ${{ env.DEBIAN_FILEURL }}
+      - id: cache
+        name: Cache
+        uses: ./.github/actions/smart-cache
 
-      # - id: cache
-      #   name: Cache
-      #   uses: ./.github/actions/smart-cache
 
-      # - name: Download image
-      #   run: wget "$IMAGE_URL"
-      #   if: steps.cache.outputs.cache-hit != 'true'
+      - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+
+      - name: Download image
+        run: echo ${{ env.DEBIAN_FILEURL }}
+        if: steps.cache.outputs.cache-hit != 'true'
+      #   run: wget "$IMAGE_URL
 
     # --
 
