@@ -48,7 +48,7 @@ jobs:
 
       - name: Upload original image artifact
         run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
-        # if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
 
   # Rebuild images
   rebuild-images:
