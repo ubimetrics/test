@@ -11,8 +11,8 @@ DEBIAN_FILEURL="x"
 GIT_CACHE_NAME="debian-$DEBIAN_VERSION-$DEBIAN_VARIANT-$DEBIAN_RELEASE"
 GIT_CACHE_PATH="*.qcow2"
 
-# Export variables to github workflow next steps
-#if [[ -f "$GITHUB_ENV" ]]; then
+# Export variables to github workflow
+if [[ -f "$GITHUB_ENV" ]]; then
 cat >> "$GITHUB_ENV" <<-EOF
 	DEBIAN_VERSION="$DEBIAN_VERSION"
 	DEBIAN_VERNAME="$DEBIAN_VERNAME"
@@ -22,4 +22,4 @@ cat >> "$GITHUB_ENV" <<-EOF
 	GIT_CACHE_NAME="$GIT_CACHE_NAME"
 	GIT_CACHE_PATH="$GIT_CACHE_PATH"
 EOF
-#fi
+fi
