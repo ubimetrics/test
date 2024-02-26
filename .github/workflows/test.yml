@@ -42,4 +42,7 @@ jobs:
         run: echo $DEBIAN_RELEASE
 
       - name: Test 4
+        run: echo ${{ env.GITHUB_SHA_SHORT }}
+
+      - name: Test 5
         run: ./test.sh bbb 222
