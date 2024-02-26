@@ -25,3 +25,5 @@ echo "DEBIAN_RELEASE=$DEBIAN_RELEASE" >> $GITHUB_ENV
 
 echo $GITHUB_ENV
 cat $GITHUB_ENV
+ls -lha $GITHUB_ENV
+echo "---"
