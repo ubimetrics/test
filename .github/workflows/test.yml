@@ -69,7 +69,7 @@ jobs:
           TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
           # sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
           # sudo rm ${SOURCE_FILE}
-          cp ${SOURCE_FILE} ${TARGET_FILE}
+          mv ${SOURCE_FILE} ${TARGET_FILE}
 
       # - name: Upload custom image artifact
       #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
@@ -79,6 +79,9 @@ jobs:
         with:
           name: ${{ matrix.variant }}-image
           path: "*.qcow2"
+          # name: ${{ env.IMAGE_FILENAME }}
+          # path: "*.qcow2"
+          retention-days: 1
 
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
 
@@ -103,6 +106,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - run: ls -lh
+
 
       # - name: Create release draft
       #   uses: ./.github/actions/create-release
