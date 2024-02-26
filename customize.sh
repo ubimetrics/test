@@ -14,6 +14,6 @@ packages=(
 )
 
 # Install packages
-echo sudo virt-customize -a "$IMAGE_FILENAME" \
+sudo virt-customize -a "$IMAGE_FILENAME" \
     --install "${packages[$DEBIAN_VARIANT]}" \
     --run-command "apt-get clean"
