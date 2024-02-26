@@ -55,8 +55,6 @@ jobs:
 
       - name: Install libguestfs
         run: sudo apt-get install -y libguestfs-tools
-          # sudo apt-get update -y
-          # sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
         run: ./customize.sh ${{ env.IMAGE_FILENAME }} ${{ matrix.variant }}
@@ -94,13 +92,15 @@ jobs:
           merge-multiple: true
 
       - name: Create release draft
-        uses: ./.github/actions/create-release
-      #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-
-      - run: ls -lh
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${GITHUB_REF_NAME}" \
+              --verify-tag \
+              --latest \
+              --draft
 
       - name: Upload original image artifact
-        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
-      #   if: startsWith(github.ref, 'refs/tags/')
+        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2 --clobber
 
       - run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
