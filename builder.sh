@@ -18,16 +18,11 @@ echo "---1"
 echo $@
 echo "---2"
 
-echo "---3"
-cat $GITHUB_ENV
-echo "---4"
 
 echo "DEBIAN_VERSION=$DEBIAN_VERSION" >> $GITHUB_ENV
 echo "DEBIAN_VERNAME=$DEBIAN_VERNAME" >> $GITHUB_ENV
 echo "DEBIAN_RELEASE=$DEBIAN_RELEASE" >> $GITHUB_ENV
 
-echo "---5"
-echo $GITHUB_ENV
-cat $GITHUB_ENV
-ls -lha $GITHUB_ENV
-echo "---6"
+if [[ "$1" == "relase" ]]; then
+	do_relase
+fi
