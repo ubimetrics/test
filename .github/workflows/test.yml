@@ -97,6 +97,8 @@ jobs:
         uses: ./.github/actions/create-release
       #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
+      - run: ls -lh
+
       - name: Upload original image artifact
         run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
       #   if: startsWith(github.ref, 'refs/tags/')
