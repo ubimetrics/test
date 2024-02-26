@@ -13,7 +13,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  # Download
+  # Download original Debian qcow2 image
   download:
     name: Download image
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 
-  # Customize image
+  # Customize images
   customize:
     name: Customize image
     needs: download
@@ -50,7 +50,7 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - name: Cache
+      - name: Load cached files
         uses: ./.github/actions/smart-cache
 
       - name: Install libguestfs
@@ -59,37 +59,24 @@ jobs:
           # sudo apt-get install -y libguestfs-tools
 
       - name: Rebuild image
-        run: ./customize.sh qemu ${{ env.IMAGE_FILENAME }}
-        # run: ./customize.sh ${{ matrix.variant }}
+        run: ./customize.sh ${{ env.IMAGE_FILENAME }} ${{ matrix.variant }}
 
       - name: Compress image artifact
-        run: |
-          # Compress image
-          SOURCE_FILE="$(ls *.qcow2)"
-          TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
-          # sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
-          # sudo rm ${SOURCE_FILE}
-          mv ${SOURCE_FILE} ${TARGET_FILE}
-
-      # - name: Upload custom image artifact
-      #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+        run: ./compress.sh ${{ env.IMAGE_FILENAME }} ${{ matrix.variant }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.variant }}-image
-          path: "*.qcow2"
-          # name: ${{ env.IMAGE_FILENAME }}
-          # path: "*.qcow2"
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_NAME }}
           retention-days: 1
-
-      - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
 
   # Release
   release:
     name: Create release
     needs: customize
     runs-on: ubuntu-latest
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Checkout
@@ -98,8 +85,7 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - id: cache
-        name: Cache
+      - name: Load cached files
         uses: ./.github/actions/smart-cache
 
       - name: Download all workflow run artifacts
@@ -109,7 +95,6 @@ jobs:
 
       - run: ls -lh
 
-
       # - name: Create release draft
       #   uses: ./.github/actions/create-release
       #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
@@ -117,3 +102,17 @@ jobs:
       # - name: Upload original image artifact
       #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
       #   if: startsWith(github.ref, 'refs/tags/')
+
+      # - name: Upload custom image artifact
+      #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+
+      - run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
+
+  xpto:
+    name: Upload artifacts
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
