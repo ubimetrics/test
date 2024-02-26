@@ -42,7 +42,7 @@ jobs:
         name: Cache
         uses: ./.github/actions/smart-cache
 
-      - name: Download image
+      - name: Download origianl image
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 
@@ -63,14 +63,37 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - run: echo ${{ env.GIT_CACHE_NAME }}
-      - run: echo ${{ env.GIT_CACHE_PATH }}
+      - name: Cache
+        uses: ./.github/actions/smart-cache
 
-  #     - name: Cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         key: ${{ env.DEBIAN_VERSION }}
-  #         path: "*.qcow2"
-  #       id: cache
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          # sudo apt-get install -y libguestfs-tools
+
+      - name: Rebuild image
+        run: ./customize
+        # run: |
+        #   # Install packages
+        #   declare -A packages
+        #   packages=(
+        #     [qemu]=qemu-guest-agent
+        #     [locales]=qemu-guest-agent,locales-all
+        #     [extras]=qemu-guest-agent,locales-all,htop
+        #   )
+        #   sudo virt-customize -a *.qcow2 \
+        #     --install ${packages[${{ matrix.variant }}]} \
+        #     --run-command "apt-get clean"
+
+      - name: Compress image artifact
+        run: |
+          # Compress image
+          # SOURCE_FILE="$(ls *.qcow2)"
+          # TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
+          # sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
+          # sudo rm ${SOURCE_FILE}
+
+      # - name: Upload custom image artifact
+      #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
