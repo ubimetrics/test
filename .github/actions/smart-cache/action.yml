@@ -3,6 +3,10 @@ description: 'Cache artifacts like dependencies and build outputs to improve wor
 branding:
   icon: 'archive'
   color: 'purple'
+outputs:
+  cache-hit:
+    description: 'A boolean value to indicate an exact match was found for the primary key'
+    value: ${{ steps.cache.outputs.cache-hit }}
 runs:
   using: "composite"
   steps:

@@ -42,13 +42,16 @@ jobs:
         name: Cache
         uses: ./.github/actions/smart-cache
 
-
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
 
       - name: Download image
         run: echo ${{ env.DEBIAN_FILEURL }}
-        if: steps.cache.outputs.cache-hit != 'true'
       #   run: wget "$IMAGE_URL
+        if: steps.cache.outputs.cache-hit != 'true'
+
+      - name: Download image
+        run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
+        if: steps.cache.outputs.cache-hit != 'true'
 
     # --
 
