@@ -7,8 +7,11 @@ on:
       - v*
       - debian*
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   # Release
