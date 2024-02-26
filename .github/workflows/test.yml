@@ -104,6 +104,8 @@ jobs:
 
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
 
       - run: ls -lh
 
