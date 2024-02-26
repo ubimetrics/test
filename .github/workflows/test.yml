@@ -33,7 +33,13 @@ jobs:
         run: echo Download
 
       - name: Test 1
-        run: ./test.sh aaa
+        run: echo $DEBIAN_RELEASE
 
       - name: Test 2
-        run: ./test.sh bbb
+        run: ./test.sh aaa 111
+
+      - name: Test 3
+        run: echo $DEBIAN_RELEASE
+
+      - name: Test 4
+        run: ./test.sh bbb 222
