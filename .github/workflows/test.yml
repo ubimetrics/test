@@ -42,17 +42,11 @@ jobs:
         name: Cache
         uses: ./.github/actions/smart-cache
 
+      - name: Download image
+        run: wget "$DEBIAN_FILEURL"
+        if: steps.cache.outputs.cache-hit != 'true'
+
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
-
-      - name: Download image
-        run: echo ${{ env.DEBIAN_FILEURL }}
-      #   run: wget "$IMAGE_URL
-        if: steps.cache.outputs.cache-hit != 'true'
-
-      - name: Download image
-        run: wget "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
-        if: steps.cache.outputs.cache-hit != 'true'
-
     # --
 
       # - name: Cache
