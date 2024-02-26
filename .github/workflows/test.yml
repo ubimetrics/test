@@ -46,30 +46,9 @@ jobs:
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 
-      - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
-    # --
-
-      # - name: Cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     key: ${{ env.CACHE_FILENAME }}
-      #     path: "*.qcow2"
-      #   id: cache
-
-      # - name: Cache image
-      #   uses: actions/cache@v4
-      #   with:
-      #     key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
-      #     path: "*.qcow2"
-      #   id: cache
-
-      # - name: Download image
-      #   if: steps.cache.outputs.cache-hit != 'true'
-      #   run: echo Downloading file...
-      #   #run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
-
-      # - name: Upload original image artifact
-      #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+      - name: Upload original image artifact
+        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+        # if: startsWith(github.ref, 'refs/tags/')
 
   # Rebuild images
   rebuild-images:
@@ -93,3 +72,5 @@ jobs:
   #         key: ${{ env.DEBIAN_VERSION }}
   #         path: "*.qcow2"
   #       id: cache
+
+      - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
