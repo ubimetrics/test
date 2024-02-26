@@ -42,7 +42,7 @@ jobs:
         name: Cache
         uses: ./.github/actions/smart-cache
 
-      - name: Download origianl image
+      - name: Download original image
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 
@@ -50,10 +50,11 @@ jobs:
         run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
         if: startsWith(github.ref, 'refs/tags/')
 
-  # Rebuild images
-  rebuild-images:
-    name: Rebuild image
-    needs: [release, download]
+  # Customize image
+  customize-image:
+    name: Customize image
+    # needs: [release, download]
+    needs: [download]
     runs-on: ubuntu-latest
 
     steps:
@@ -87,3 +88,15 @@ jobs:
       #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+
+  upload-image:
+    name: Upload image artifact
+    needs: [release, customize-image]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Load settings
+        run: source settings.sh
