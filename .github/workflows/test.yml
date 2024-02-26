@@ -107,12 +107,3 @@ jobs:
       #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
 
       - run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
-
-  xpto:
-    name: Upload artifacts
-    needs: release
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
