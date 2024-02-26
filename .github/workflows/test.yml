@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - v*
+      - debian*
+
+permissions:
+  contents: write
+
+jobs:
+  # Release
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create release draft
+        run: echo Release
+
+  # Download
+  download:
+    name: Download
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download
+        run: echo Download
+
+      - name: Test 1
+        run: ./test.sh aaa
+
+      - name: Test 2
+        run: ./test.sh bbb
