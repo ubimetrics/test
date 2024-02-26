@@ -19,14 +19,16 @@ function do_relase() {
 }
 
 echo "---1"
-echo $@
+echo "$@"
 echo "---2"
 
+# Export variables to github workflow next steps
+cat <<EOF >> "$GITHUB_ENV"
+	DEBIAN_VERSION="$DEBIAN_VERSION"
+	DEBIAN_VERNAME="$DEBIAN_VERNAME"
+	DEBIAN_RELEASE="$DEBIAN_RELEASE"
+EOF
 
-echo "DEBIAN_VERSION=$DEBIAN_VERSION" >> $GITHUB_ENV
-echo "DEBIAN_VERNAME=$DEBIAN_VERNAME" >> $GITHUB_ENV
-echo "DEBIAN_RELEASE=$DEBIAN_RELEASE" >> $GITHUB_ENV
-
-if "$1" == "release"; then
+if [ "$1" == "release" ]; then
 	do_relase
 fi
