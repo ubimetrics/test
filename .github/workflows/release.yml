@@ -2,9 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - debian*
+  # push:
+  #   tags:
+  #     - v*
+  #     - debian*
 
 permissions:
   contents: write
