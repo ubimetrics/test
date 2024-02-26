@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: images
-          path: *.qcow2
+          path: "*.qcow2"
 
       - run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
 
