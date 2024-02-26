@@ -19,14 +19,17 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
 
-    steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v4
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v4
 
+    #   - name: Create release draft
+    #     uses: ./.github/actions/create-release
+
+    steps:
+      - uses: actions/checkout@v4
       - name: Create release draft
         uses: ubimetrics/test/.github/actions/create-release@main
-
-        # uses: ./.github/actions/create-release
 
   # Download
   download:
