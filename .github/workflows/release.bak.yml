@@ -1,0 +1,104 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - debian*
+
+permissions:
+  contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  DEBIAN_VERSION: "12"
+  DEBIAN_VERNAME: "bookworm"
+  DEBIAN_RELEASE: "20240201-1644"
+  DEBIAN_VARIANT: "genericcloud-amd64"
+
+jobs:
+  # Create a new release based on current tag name
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create release draft
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${GITHUB_REF_NAME}" \
+              --generate-notes \
+              --latest \
+              --draft
+
+  # Download Debian base cloud image
+  download:
+    name: Download image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: cache
+        name: Cache image
+        uses: actions/cache@v4
+        with:
+          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+          path: "*.qcow2"
+
+      - name: Download image
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: wget "https://cloud.debian.org/images/cloud/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
+
+      - name: Upload original image artifact
+        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+
+  # Rebuild images
+  rebuild-images:
+    name: Rebuild ${{ matrix.variant }} image
+    needs: [release, download]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [qemu, locales, extras]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache image
+        uses: actions/cache/restore@v4
+        with:
+          key: "debian-${{ env.DEBIAN_VERSION }}-${{ env.DEBIAN_VARIANT }}-${{ env.DEBIAN_RELEASE }}"
+          path: "*.qcow2"
+
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libguestfs-tools
+
+      - name: Rebuild image
+        run: |
+          # Install packages
+          declare -A packages
+          packages=(
+            [qemu]=qemu-guest-agent
+            [locales]=qemu-guest-agent,locales-all
+            [extras]=qemu-guest-agent,locales-all,htop
+          )
+          sudo virt-customize -a *.qcow2 \
+            --install ${packages[${{ matrix.variant }}]} \
+            --run-command "apt-get clean"
+
+      - name: Compress image
+        run: |
+          # Compress image
+          SOURCE_FILE="$(ls *.qcow2)"
+          TARGET_FILE="${SOURCE_FILE/genericcloud/${{ matrix.variant }}}"
+          sudo virt-sparsify ${SOURCE_FILE} --compress ${TARGET_FILE}
+          sudo rm ${SOURCE_FILE}
+
+      - name: Upload custom image artifact
+        run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
