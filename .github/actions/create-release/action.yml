@@ -1,11 +1,11 @@
 name: 'Create a Release'
 description: 'Create a release for a tag in your repository'
-author: 'GitHub'
 branding:
   icon: 'tag'
   color: 'green'
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/action.sh
+    - name: Create a release
+      run: ${{ github.action_path }}/action.sh
       shell: bash

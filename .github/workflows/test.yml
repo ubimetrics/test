@@ -19,16 +19,12 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
 
-    # steps:
-    #   - name: Checkout
-    #     uses: actions/checkout@v4
-
-    #   - name: Create release draft
-    #     uses: ./.github/actions/create-release
-
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Create release draft
-        uses: ubimetrics/test/.github/actions/create-release@${{ github.ref }}
+        uses: ./.github/actions/create-release
 
   # Download
   download:
@@ -38,6 +34,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Load settings
+        run: source settings.sh
+
+      - run: echo ${{ env.GIT_CACHE_NAME }}
+      - run: echo ${{ env.GIT_CACHE_PATH }}
+      - run: echo ${{ env.DEBIAN_FILEURL }}
+
+      # - id: cache
+      #   name: Cache
+      #   uses: ./.github/actions/smart-cache
+
+      # - name: Download image
+      #   run: wget "$IMAGE_URL"
+      #   if: steps.cache.outputs.cache-hit != 'true'
+
+    # --
+
+      # - name: Cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ env.CACHE_FILENAME }}
+      #     path: "*.qcow2"
+      #   id: cache
 
       # - name: Cache image
       #   uses: actions/cache@v4
@@ -53,3 +73,26 @@ jobs:
 
       # - name: Upload original image artifact
       #   run: gh release upload "${GITHUB_REF_NAME}" *.qcow2
+
+  # Rebuild images
+  rebuild-images:
+    name: Rebuild image
+    needs: [release, download]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Load settings
+        run: source settings.sh
+
+      - run: echo ${{ env.GIT_CACHE_NAME }}
+      - run: echo ${{ env.GIT_CACHE_PATH }}
+
+  #     - name: Cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         key: ${{ env.DEBIAN_VERSION }}
+  #         path: "*.qcow2"
+  #       id: cache
