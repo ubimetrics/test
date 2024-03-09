@@ -12,6 +12,10 @@ permissions:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # these are overwritten by "settings.sh"
+  GIT_CACHE_NAME: ""
+  IMAGE_FILENAME: ""
+
 jobs:
   download:
     name: Download base image
