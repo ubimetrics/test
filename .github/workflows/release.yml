@@ -52,35 +52,34 @@ jobs:
       - name: Create a new GitHub Release
         run: |
           # Create a new GitHub Release if it does not exists
-          gh release list | grep "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" ||
-            gh release create "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
+          gh release list | grep "${GITHUB_RELEASE}" ||
+            gh release create "${GITHUB_RELEASE}" \
               --repo="${GITHUB_REPOSITORY}" \
-              --title="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
+              --title="${GITHUB_RELEASE}" \
               --latest \
               --draft
 
+  customize:
+    name: Customize image
+    needs: download
+    runs-on: ubuntu-latest
 
-  # customize:
-  #   name: Customize image
-  #   needs: download
-  #   runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [qemu, locales, extras]
 
-  #   strategy:
-  #     matrix:
-  #       variant: [qemu, locales, extras]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+      - name: Load settings
+        run: source settings.sh ${{ matrix.variant }}
 
-  #     - name: Load settings
-  #       run: source settings.sh
-
-  #     - name: Load cached files
-  #       uses: actions/cache@v4
-  #       with:
-  #         key: ${{ env.GIT_CACHE_NAME }}
-  #         path: ${{ env.IMAGE_FILENAME }}
+      - name: Load cached files
+        uses: actions/cache@v4
+        with:
+          key: ${{ env.GIT_CACHE_NAME }}
+          path: ${{ env.IMAGE_FILENAME }}
 
   #     - name: Install libguestfs
   #       run: sudo apt-get install -y libguestfs-tools

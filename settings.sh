@@ -11,14 +11,17 @@ DEBIAN_FILEURL="$DEBIAN_BASEURL/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_
 # Image filename
 IMAGE_FILENAME=$(basename $DEBIAN_FILEURL)
 
-# Release name
+# GitHub cache
+GIT_CACHE_NAME="debian-$DEBIAN_VERSION-$DEBIAN_VARIANT-$DEBIAN_RELEASE"
+
+# GitHub release name
 if [[ "${GITHUB_REF_NAME}" == "refs/tags/*" ]]; then
 	GITHUB_RELEASE="${GITHUB_REF_NAME}"
 else
 	GITHUB_RELEASE="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
 fi
 
-echo ">>> $GITHUB_RELEASE"
+echo ">>> $1"
 
 # packages=(
 #     [qemu]=qemu-guest-agent
@@ -30,8 +33,6 @@ echo ">>> $GITHUB_RELEASE"
 
 # IMAGE_REF_NAME="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
 
-# Github cache
-GIT_CACHE_NAME="debian-$DEBIAN_VERSION-$DEBIAN_VARIANT-$DEBIAN_RELEASE"
 
 # Export variables to github workflow
 if [[ -f "$GITHUB_ENV" ]]; then
@@ -43,5 +44,6 @@ cat >> "$GITHUB_ENV" <<-EOF
 	DEBIAN_FILEURL=$DEBIAN_FILEURL
 	IMAGE_FILENAME=$IMAGE_FILENAME
 	GIT_CACHE_NAME=$GIT_CACHE_NAME
+	GITHUB_RELEASE=$GITHUB_RELEASE
 EOF
 fi
