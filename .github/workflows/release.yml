@@ -14,7 +14,7 @@ env:
 
 jobs:
   download:
-    name: Download image
+    name: Download base image
     runs-on: ubuntu-latest
 
     steps:
@@ -49,15 +49,15 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - name: Test
+      - name: Create a new GitHub Release
         run: |
-          gh release list |
-            grep "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" ||
-              gh release create "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
-                  --repo="${GITHUB_REPOSITORY}" \
-                  --title="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
-                  --latest \
-                  --draft
+          # Create a new GitHub Release if it does not exists
+          gh release list | grep "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" ||
+            gh release create "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
+              --latest \
+              --draft
 
 
   # customize:

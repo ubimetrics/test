@@ -11,6 +11,25 @@ DEBIAN_FILEURL="$DEBIAN_BASEURL/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_
 # Image filename
 IMAGE_FILENAME=$(basename $DEBIAN_FILEURL)
 
+# Release name
+if [[ "${GITHUB_REF_NAME}" == "refs/tags/*" ]]; then
+	GITHUB_RELEASE="${GITHUB_REF_NAME}"
+else
+	GITHUB_RELEASE="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
+fi
+
+echo ">>> $GITHUB_RELEASE"
+
+# packages=(
+#     [qemu]=qemu-guest-agent
+#     [locales]=qemu-guest-agent,locales-all
+#     [extras]=qemu-guest-agent,locales-all,htop
+# )
+
+# IMAGE_PACKAGES="qemu-guest-agent"
+
+# IMAGE_REF_NAME="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
+
 # Github cache
 GIT_CACHE_NAME="debian-$DEBIAN_VERSION-$DEBIAN_VARIANT-$DEBIAN_RELEASE"
 
