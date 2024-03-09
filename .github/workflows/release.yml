@@ -17,6 +17,28 @@ env:
   IMAGE_FILENAME: ""
 
 jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    # if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Load settings
+        run: source settings.sh
+
+      - name: Create a new GitHub Release
+        run: |
+          # Create a new GitHub Release if it does not exists
+          gh release list | grep "${GITHUB_RELEASE}" ||
+            gh release create "${GITHUB_RELEASE}" \
+              --repo="${GITHUB_REPOSITORY}" \
+              --title="${GITHUB_RELEASE}" \
+              --latest \
+              --draft
+
   download:
     name: Download base image
     runs-on: ubuntu-latest
@@ -38,28 +60,6 @@ jobs:
       - name: Download base image
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
-
-  release:
-    name: Create release
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Load settings
-        run: source settings.sh
-
-      - name: Create a new GitHub Release
-        run: |
-          # Create a new GitHub Release if it does not exists
-          gh release list | grep "${GITHUB_RELEASE}" ||
-            gh release create "${GITHUB_RELEASE}" \
-              --repo="${GITHUB_REPOSITORY}" \
-              --title="${GITHUB_RELEASE}" \
-              --latest \
-              --draft
 
   customize:
     name: Customize image
