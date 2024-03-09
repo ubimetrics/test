@@ -35,7 +35,7 @@ jobs:
           key: ${{ env.GIT_CACHE_NAME }}
           path: ${{ env.IMAGE_FILENAME }}
 
-      - name: Download Debian genericcloud image
+      - name: Download base image
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 

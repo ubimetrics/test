@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2054
 
 # Debian
 DEBIAN_VERSION="12"
@@ -21,18 +22,20 @@ else
 	GITHUB_RELEASE="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
 fi
 
-echo ">>> $1"
+# Image packages
+PACKAGES=(
+    [xqemu]=qemu-guest-agent
+    [locales]=qemu-guest-agent,locales-all
+    [xextras]=qemu-guest-agent,locales-all,htop
+)
 
-# packages=(
-#     [qemu]=qemu-guest-agent
-#     [locales]=qemu-guest-agent,locales-all
-#     [extras]=qemu-guest-agent,locales-all,htop
-# )
+if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
+	IMAGE_PACKAGES="${PACKAGES[$1]}"
+else
+	IMAGE_PACKAGES="qemu-guest-agent"
+fi
 
-# IMAGE_PACKAGES="qemu-guest-agent"
-
-# IMAGE_REF_NAME="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
-
+echo ">>> $IMAGE_PACKAGES <<<"
 
 # Export variables to github workflow
 if [[ -f "$GITHUB_ENV" ]]; then
@@ -42,8 +45,9 @@ cat >> "$GITHUB_ENV" <<-EOF
 	DEBIAN_RELEASE=$DEBIAN_RELEASE
 	DEBIAN_VARIANT=$DEBIAN_VARIANT
 	DEBIAN_FILEURL=$DEBIAN_FILEURL
-	IMAGE_FILENAME=$IMAGE_FILENAME
 	GIT_CACHE_NAME=$GIT_CACHE_NAME
 	GITHUB_RELEASE=$GITHUB_RELEASE
+	IMAGE_FILENAME=$IMAGE_FILENAME
+	IMAGE_PACKAGES=$IMAGE_PACKAGES
 EOF
 fi
