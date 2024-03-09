@@ -23,6 +23,7 @@ else
 fi
 
 # Image packages
+declare -A PACKAGES
 PACKAGES=(
     [locales]=qemu-guest-agent,locales-all
     [extras]=qemu-guest-agent,locales-all,htop
