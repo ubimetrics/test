@@ -24,16 +24,17 @@ fi
 
 # Image packages
 PACKAGES=(
-    [xqemu]=qemu-guest-agent
     [locales]=qemu-guest-agent,locales-all
-    [xextras]=qemu-guest-agent,locales-all,htop
+    [extras]=qemu-guest-agent,locales-all,htop
+    [qemu]=qemu-guest-agent
 )
 
+IMAGE_PACKAGES="${PACKAGES[$1]}"
 if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
-	IMAGE_PACKAGES="${PACKAGES[$1]}"
+	# IMAGE_PACKAGES="${PACKAGES[$1]}"
 	echo ">>> true <<<" "$1" "${PACKAGES[$1]}"
 else
-	IMAGE_PACKAGES="qemu-guest-agent"
+	# IMAGE_PACKAGES="qemu-guest-agent"
 	echo ">>> false <<<"
 fi
 
