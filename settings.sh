@@ -25,20 +25,16 @@ fi
 # Image packages
 declare -A PACKAGES
 PACKAGES=(
-    [xqemu]=qemu-guest-agent
+    [qemu]=qemu-guest-agent
     [locales]=qemu-guest-agent,locales-all
     [extras]=qemu-guest-agent,locales-all,htop
 )
 
 if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
 	IMAGE_PACKAGES="${PACKAGES[$1]}"
-	echo ">>> true <<<" "$1" "${PACKAGES[$1]}"
 else
 	IMAGE_PACKAGES="qemu-guest-agent"
-	echo ">>> false <<<"
 fi
-
-echo ">>> $IMAGE_PACKAGES <<<"
 
 # Export variables to github workflow
 if [[ -f "$GITHUB_ENV" ]]; then
