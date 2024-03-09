@@ -53,12 +53,11 @@ jobs:
         run: |
           gh release list |
             grep "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" ||
-              gh release create "${GITHUB_REF_NAME}" \
+              gh release create "v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
                   --repo="${GITHUB_REPOSITORY}" \
-                  --title="${GITHUB_REF_NAME}" \
+                  --title="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}" \
                   --latest \
                   --draft
-                  # --verify-tag \
 
 
   # customize:
