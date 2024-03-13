@@ -92,9 +92,10 @@ jobs:
         run: |
           sudo virt-customize -a "${{ env.SOURCE_IMGFILE }}" \
             --install "${{ env.IMAGE_PACKAGES }}" \
-            --run-command "apt-get autoremove --yes"
-            --run-command "apt-get clean autoclean"
-            --run-command "rm -rf /var/lib/{apt,dpkg,cache,log}/"
+            --run-command "apt-get autoremove --yes" \
+            --run-command "apt-get clean autoclean" \
+            --run-command "rm -rf /var/lib/apt/lists/*"
+          # --run-command "rm -rf /var/lib/{apt,dpkg,cache,log}/"
 
       - name: Compress image artifact
         run: sudo virt-sparsify ${{ env.SOURCE_IMGFILE }} --compress ${{ env.TARGET_IMGFILE }}
