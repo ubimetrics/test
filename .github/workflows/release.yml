@@ -13,34 +13,33 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # these are overwritten by "settings.sh"
+  SOURCE_IMGFILE: ""
+  TARGET_IMGFILE: ""
+  IMAGE_PACKAGES: ""
   GIT_CACHE_NAME: ""
-  IMAGE_FILENAME: ""
+  GITHUB_RELEASE: ""
 
 jobs:
   release:
     name: Create release
     runs-on: ubuntu-latest
-    # if: startsWith(github.ref, 'refs/tags/')
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Load settings
-        run: source settings.sh
-
       - name: Create a new GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           # Create a new GitHub Release if it does not exists
-          gh release list | grep "${GITHUB_RELEASE}" ||
-            gh release create "${GITHUB_RELEASE}" \
-              --repo="${GITHUB_REPOSITORY}" \
-              --title="${GITHUB_RELEASE}" \
+          gh release list | grep "${{ github.ref_name }}" ||
+            gh release create "${{ github.ref_name }}" \
+              --repo="${{ github.repository }}" \
+              --title="${{ github.ref_name }}" \
+              --verify-tag \
               --latest \
               --draft
 
   download:
     name: Download base image
+    needs: release
     runs-on: ubuntu-latest
 
     steps:
@@ -55,15 +54,18 @@ jobs:
         uses: actions/cache@v4
         with:
           key: ${{ env.GIT_CACHE_NAME }}
-          path: ${{ env.IMAGE_FILENAME }}
+          path: ${{ env.SOURCE_IMGFILE }}
 
       - name: Download base image
         run: wget "$DEBIAN_FILEURL"
         if: steps.cache.outputs.cache-hit != 'true'
 
+      - name: Upload original image artifact
+        run: gh release upload "${{ github.ref_name }}" ${{ env.SOURCE_IMGFILE }} --clobber
+
   customize:
     name: Customize image
-    needs: [release, download]
+    needs: download
     runs-on: ubuntu-latest
 
     strategy:
@@ -81,61 +83,18 @@ jobs:
         uses: actions/cache@v4
         with:
           key: ${{ env.GIT_CACHE_NAME }}
-          path: ${{ env.IMAGE_FILENAME }}
+          path: ${{ env.SOURCE_IMGFILE }}
 
-  #     - name: Install libguestfs
-  #       run: sudo apt-get install -y libguestfs-tools
+      - name: Install libguestfs
+        run: sudo apt-get install -y libguestfs-tools
 
   #     - name: Rebuild image
-  #       run: ./customize.sh ${{ env.IMAGE_FILENAME }} ${{ matrix.variant }}
+  #       run: ./customize.sh ${{ env.SOURCE_IMGFILE }} ${{ matrix.variant }}
 
-  #     - name: Compress image artifact
-  #       run: |
-  #         sudo virt-sparsify ${{ env.IMAGE_FILENAME }} \
-  #           --compress ${{ env.ARTIFACT_NAME }}
+      - name: Compress image artifact
+        run: sudo virt-sparsify ${{ env.SOURCE_IMGFILE }} --compress ${{ env.TARGET_IMGFILE }}
 
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ${{ env.ARTIFACT_NAME }}
-  #         path: ${{ env.ARTIFACT_NAME }}
-  #         retention-days: 1
+      - name: Upload custom image to a GitHub Release
+        run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.TARGET_IMGFILE }} --clobber
 
-  # release:
-  #   name: Create release
-  #   needs: customize
-  #   runs-on: ubuntu-latest
-  #   # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-  #   if: startsWith(github.ref, 'refs/tags/')
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Load settings
-  #       run: source settings.sh
-
-  #     - name: Load cached files
-  #       uses: actions/cache@v4
-  #       with:
-  #         key: ${{ env.GIT_CACHE_NAME }}
-  #         path: ${{ env.IMAGE_FILENAME }}
-
-  #     - name: Download all workflow run artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         merge-multiple: true
-
-  #     - name: Create release draft
-  #       run: |
-  #         gh release create "${GITHUB_REF_NAME}" \
-  #             --repo="${GITHUB_REPOSITORY}" \
-  #             --title="${GITHUB_REF_NAME}" \
-  #             --verify-tag \
-  #             --latest \
-  #             --draft
-
-  #     - name: Upload original image artifact
-  #       run: gh release upload "${GITHUB_REF_NAME}" *.qcow2 --clobber
-
-  #     - run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
+      - run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
