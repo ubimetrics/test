@@ -27,8 +27,10 @@ fi
 declare -A PACKAGES
 PACKAGES=(
     [qemu]=qemu-guest-agent
-    [locales]=qemu-guest-agent,locales-all
-    [extras]=qemu-guest-agent,locales-all,htop
+    [x_locales]=qemu-guest-agent,locales-all
+    [x_extras]=qemu-guest-agent,locales-all,htop
+	[locales]=locales-all
+	[extras]=htop
 )
 
 if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
@@ -36,12 +38,6 @@ if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
 else
 	IMAGE_PACKAGES="qemu-guest-agent"
 fi
-
-
-
-### TO REMOVE
-IMAGE_PACKAGES="htop"
-###
 
 # Export variables to github workflow
 if [[ -f "$GITHUB_ENV" ]]; then
