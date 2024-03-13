@@ -27,10 +27,7 @@ fi
 declare -A PACKAGES
 PACKAGES=(
     [qemu]=qemu-guest-agent
-    [x_locales]=qemu-guest-agent,locales-all
-    [x_extras]=qemu-guest-agent,locales-all,htop
-	[locales]=locales-all
-	[extras]=htop
+	[qemu-extras]=qemu-guest-agent,htop
 )
 
 if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
