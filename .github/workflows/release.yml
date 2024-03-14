@@ -91,16 +91,15 @@ jobs:
       - name: Rebuild image
         run: |
           sudo virt-customize -a "${{ env.SOURCE_IMGFILE }}" \
+            # Install packages
             --install "${{ env.IMAGE_PACKAGES }}" \
+            # Cleanup apt cache
             --run-command "apt-get autoremove --yes" \
             --run-command "apt-get clean autoclean" \
             --run-command "rm -rf /var/lib/apt/lists/*" \
+            # Locales
             --run-command "sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen" \
             --run-command "sudo locale-gen"
-
-            # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
-            # sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
-            # sudo locale-gen
 
       - name: Compress image artifact
         run: sudo virt-sparsify ${{ env.SOURCE_IMGFILE }} --compress ${{ env.TARGET_IMGFILE }}
