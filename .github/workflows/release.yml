@@ -94,9 +94,9 @@ jobs:
             --install "${{ env.IMAGE_PACKAGES }}" \
             --run-command "apt-get autoremove --yes" \
             --run-command "apt-get clean autoclean" \
-            --run-command "rm -rf /var/lib/apt/lists/*" \
-            --run-command "sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen" \
-            --run-command "sudo locale-gen"
+            --run-command "rm -rf /var/lib/apt/lists/*"
+      # --run-command "sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen" \
+      # --run-command "sudo locale-gen"
 
       - name: Compress image artifact
         run: sudo virt-sparsify ${{ env.SOURCE_IMGFILE }} --compress ${{ env.TARGET_IMGFILE }}
