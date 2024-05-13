@@ -96,14 +96,9 @@ jobs:
             --run-command "apt-get clean autoclean" \
             --run-command "rm -rf /var/lib/apt/lists/*" \
             --no-logfile
-        # --run-command "sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen" \
-        # --run-command "sudo locale-gen"
 
       - name: Compress image artifact
         run: sudo virt-sparsify ${{ env.SOURCE_IMGFILE }} --compress ${{ env.TARGET_IMGFILE }}
 
       - name: Upload custom image to a GitHub Release
         run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.TARGET_IMGFILE }} --clobber
-
-      - name: Summary
-        run: echo "### Finished! :rocket:" >> $GITHUB_STEP_SUMMARY
