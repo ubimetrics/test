@@ -94,7 +94,8 @@ jobs:
             --install "${{ env.IMAGE_PACKAGES }}" \
             --run-command "apt-get autoremove --yes" \
             --run-command "apt-get clean autoclean" \
-            --run-command "rm -rf /var/lib/apt/lists/*"
+            --run-command "rm -rf /var/lib/apt/lists/*" \
+            --no-logfile
         # --run-command "sudo sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen" \
         # --run-command "sudo locale-gen"
 
