@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
-apt-get install qemu-guest-agent
 
+set -e
+
+ls -l /etc/apt/
+cat /etc/apt/sources.list
+
+apt-get install qemu-guest-agent
