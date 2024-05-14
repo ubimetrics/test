@@ -23,19 +23,6 @@ else
 	GITHUB_RELEASE="v${DEBIAN_VERSION}-${DEBIAN_RELEASE}"
 fi
 
-# Image packages
-declare -A PACKAGES
-PACKAGES=(
-    [qemu]=qemu-guest-agent
-	[qemu-extras]=qemu-guest-agent,htop
-)
-
-if [[ "$1" != "" && -v "PACKAGES[$1]" ]]; then
-	IMAGE_PACKAGES="${PACKAGES[$1]}"
-else
-	IMAGE_PACKAGES="qemu-guest-agent"
-fi
-
 # Export variables to github workflow
 if [[ -f "$GITHUB_ENV" ]]; then
 cat >> "$GITHUB_ENV" <<-EOF
