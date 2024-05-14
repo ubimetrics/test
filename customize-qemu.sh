@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -o errexit
 
 ls -l /etc/apt/
 cat /etc/apt/sources.list
