@@ -1,9 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
+# shellcheck disable=SC2096
 
-set -o errexit
+asddas
 
-ls -l /etc/apt/
-cat /etc/apt/sources.list
-
-apt-get update
-apt-get install qemu-guest-agent
+apt-get update -q
+apt-get install --yes qemu-guest-agent
