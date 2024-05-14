@@ -60,7 +60,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Upload original image artifact
-        run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.SOURCE_IMGFILE }} --clobber
+        run: gh release upload "${{ env.GITHUB_RELEASE }}" *.qcow2 --clobber
+      # run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.SOURCE_IMGFILE }} --clobber
 
   customize:
     name: Customize image
