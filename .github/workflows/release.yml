@@ -13,10 +13,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # these are overwritten by "settings.sh"
-  SOURCE_IMGFILE: ""
-  TARGET_IMGFILE: ""
+  DEBIAN_FILEURL: ""
   GIT_CACHE_NAME: ""
   GITHUB_RELEASE: ""
+  SOURCE_IMGFILE: ""
+  TARGET_IMGFILE: ""
 
 jobs:
   release:
@@ -56,12 +57,11 @@ jobs:
           path: ${{ env.SOURCE_IMGFILE }}
 
       - name: Download base image
-        run: wget "$DEBIAN_FILEURL"
+        run: wget "${{ env.DEBIAN_FILEURL }}"
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Upload original image artifact
-        run: gh release upload "${{ env.GITHUB_RELEASE }}" *.qcow2 --clobber
-      # run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.SOURCE_IMGFILE }} --clobber
+        run: gh release upload "${{ env.GITHUB_RELEASE }}" ${{ env.SOURCE_IMGFILE }} --clobber
 
   customize:
     name: Customize image
