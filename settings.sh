@@ -10,8 +10,7 @@ DEBIAN_BASEURL="https://cloud.debian.org/images/cloud"
 DEBIAN_FILEURL="$DEBIAN_BASEURL/$DEBIAN_VERNAME/$DEBIAN_RELEASE/debian-${DEBIAN_VERSION}-${DEBIAN_VARIANT}-${DEBIAN_RELEASE}.qcow2"
 
 # Image filename
-SOURCE_IMGFILE=$(basename $DEBIAN_FILEURL)
-SOURCE_IMGFILE="${SOURCE_IMGFILE%.qcow2}.img"
+SOURCE_IMGFILE="$(basename $DEBIAN_FILEURL .qcow2).img"
 TARGET_IMGFILE="${SOURCE_IMGFILE/genericcloud/$1}"
 
 # GitHub cache
