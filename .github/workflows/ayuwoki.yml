@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    name: Check for new Debian release
     runs-on: ubuntu-latest
 
     steps:
@@ -14,7 +15,7 @@ jobs:
       - name: Load settings
         run: source settings.sh
 
-      - name: New releases
+      - name: New release
         run: |
           # Releases
           releases=$(
@@ -29,12 +30,12 @@ jobs:
       - name: Summary
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<-EOF
-            ### New releases! :rocket:
-
+            ### New release! :rocket:
+            $(cat releases.out)
           EOF
 
           while read release; do
             echo "* [$release](https://cloud.debian.org/images/cloud/bookworm/$release/)"
           done < "releases.out" >> $GITHUB_STEP_SUMMARY
 
-          exit 1
+        # exit 1
