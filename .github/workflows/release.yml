@@ -57,7 +57,7 @@ jobs:
           path: ${{ env.SOURCE_IMGFILE }}
 
       - name: Download base image
-        run: wget "${{ env.DEBIAN_FILEURL }}"
+        run: wget "${{ env.DEBIAN_FILEURL }}" -O ${{ env.SOURCE_IMGFILE }}
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Upload original image artifact
