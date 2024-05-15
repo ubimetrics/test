@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Check for new Debian release
+  check:
+    name: Check for new release
     runs-on: ubuntu-latest
 
     steps:
@@ -31,11 +31,8 @@ jobs:
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<-EOF
             ### New release! :rocket:
-            $(cat releases.out)
           EOF
 
           while read release; do
             echo "* [$release](https://cloud.debian.org/images/cloud/bookworm/$release/)"
           done < "releases.out" >> $GITHUB_STEP_SUMMARY
-
-        # exit 1
