@@ -11,3 +11,6 @@ EOF
 # Install packages
 apt-get --yes update
 apt-get --yes install qemu-guest-agent docker-ce
+
+# Add debian user to the docker group
+usermod -aG docker debian
